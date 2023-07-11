@@ -23,10 +23,6 @@ namespace ros2_ipcamera
     sensor_msgs::msg::PointCloud2> sync_policy;
   typedef message_filters::Synchronizer<sync_policy> message_synchronizer;
 
-  typedef sensor_msgs::msg::PointCloud2 PointCloud;
-  typedef PointCloud::Ptr PointCloudPtr;
-  typedef PointCloud::ConstPtr PointCloudConstPtr;
-
   class LidarCameraWriterNode : public rclcpp::Node
   {
     public:
