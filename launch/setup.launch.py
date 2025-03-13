@@ -14,7 +14,6 @@ def generate_launch_description():
 
   fisheye_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
   fisheye_config_file = 'file://' + os.path.join(fisheye_config_dir, "fisheye_info.yaml")
-
   fisheye_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
@@ -39,7 +38,6 @@ def generate_launch_description():
 
   reolink_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
   reolink_config_file = 'file://' + os.path.join(reolink_config_dir, "reolink_info.yaml")
-
   reolink_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
@@ -64,7 +62,6 @@ def generate_launch_description():
 
   hick_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
   hick_config_file = 'file://' + os.path.join(hick_config_dir, "reolink_info.yaml")
-
   hick_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
@@ -87,17 +84,81 @@ def generate_launch_description():
     ]
   )
 
+  ouster_params = PathJoinSubstitution([
+    FindPackageShare('ros2_ipcamera'), 'config', 'ouster.yaml'
+  ])
   ouster_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
-            FindPackageShare('ouster_ros'), 'launch', 'driver.launch.py'
+            FindPackageShare('ros2_ouster'), 'launch', 'driver_launch.py'
             ])
           ]),
           launch_arguments = {
             # Global params
-            'viz' : 'False'
+            'params_file' : ouster_params
+          }.items()
+      )
+    ]
+  )
+
+  basler_right_params = PathJoinSubstitution([
+    FindPackageShare('ros2_ipcamera'), 'config', 'basler_right.yaml'
+  ])
+  basler_right_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('pylon_ros2_camera_wrapper'), 'launch', 'pylon_ros2_camera.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'config_file' : basler_right_params,
+            'node_name' : 'basler_right_driver',
+            'camera_id' : 'F_r_cam'
+          }.items()
+      )
+    ]
+  )
+
+  basler_left_params = PathJoinSubstitution([
+    FindPackageShare('ros2_ipcamera'), 'config', 'basler_left.yaml'
+  ])
+  basler_left_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('pylon_ros2_camera_wrapper'), 'launch', 'pylon_ros2_camera.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'config_file' : basler_left_params,
+            'node_name' : 'basler_left_driver',
+            'camera_id' : 'F_l_cam'
+          }.items()
+      )
+    ]
+  )
+
+  setup_sync_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('ros2_ipcamera'), 'launch', 'setup_synchronizer.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'camera_left_topic' : '/F_l_cam/basler_left_driver/image_rect/compressed',
+            'camera_right_topic' : '/F_r_cam/basler_right_driver/image_rect/compressed',
+            'lidar_topic' : '/points',
+            'aggregated_perception_topic' : '/all_in_one'
           }.items()
       )
     ]
@@ -118,10 +179,15 @@ def generate_launch_description():
     ]
   )
 
+  # @todo: 1280 x 720 lower reoslution of basler cameras
+
   return LaunchDescription([
-    #fisheye_launch,
-    #reolink_launch,
-    #ouster_launch,
-    hick_launch,
+    # fisheye_launch,
+    # reolink_launch,
+    ouster_launch,
+    # hick_launch,
+    basler_left_launch,
+    basler_right_launch,
+    setup_sync_launch,
     rviz_node
   ])

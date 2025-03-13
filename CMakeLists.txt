@@ -18,6 +18,19 @@ find_package(OpenCV REQUIRED)
 find_package(camera_info_manager REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(pcl_conversions REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+set(msg_files
+  "msg/AggregatedPerception.msg"
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+  DEPENDENCIES std_msgs sensor_msgs
+  ADD_LINTER_TESTS
+)
+
+ament_export_dependencies(rosidl_default_runtime)
 
 include_directories(
   include
@@ -43,7 +56,7 @@ set(SYNC_INCLUDE_DEPENDS
   pcl_conversions
 )
 
-set(IPCAMERA_LIB_NAME ${PROJECT_NAME})
+set(IPCAMERA_LIB_NAME ros2_ipcamera_lib)
 set(SYNC_LIB_NAME WRITTER_SYNC_NODE)
 
 add_library(${IPCAMERA_LIB_NAME} SHARED
@@ -55,16 +68,25 @@ ament_target_dependencies(ros2_ipcamera_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
 target_link_libraries(ros2_ipcamera_node ${IPCAMERA_LIB_NAME})
 
 add_library(${SYNC_LIB_NAME} SHARED
-  src/ros2_ipcamera/lidar_camera_writter.cpp)
+  src/ros2_ipcamera/lidar_camera_writter.cpp
+  src/ros2_ipcamera/setup_synchronizer.cpp)
 target_link_libraries(${SYNC_LIB_NAME}
   ${PCL_LIBRARIES})
 target_include_directories(${SYNC_LIB_NAME} PUBLIC
   ${PCL_INCLUDE_DIRS})
 ament_target_dependencies(${SYNC_LIB_NAME} ${SYNC_INCLUDE_DEPENDS})
 
+rosidl_get_typesupport_target(cpp_typesupport_target
+  ${PROJECT_NAME} rosidl_typesupport_cpp)
+target_link_libraries(${SYNC_LIB_NAME} "${cpp_typesupport_target}")
+
 add_executable(lidar_camera_writter_node src/lidar_camera_writter_node.cpp)
 ament_target_dependencies(lidar_camera_writter_node ${SYNC_INCLUDE_DEPENDS})
 target_link_libraries(lidar_camera_writter_node ${SYNC_LIB_NAME})
+
+add_executable(setup_synchronizer_node src/setup_synchronizer_node.cpp)
+ament_target_dependencies(setup_synchronizer_node ${SYNC_INCLUDE_DEPENDS})
+target_link_libraries(setup_synchronizer_node ${SYNC_LIB_NAME})
 
 install(
   TARGETS ${IPCAMERA_LIB_NAME}
@@ -78,6 +100,7 @@ install(
 install(TARGETS
   ros2_ipcamera_node
   lidar_camera_writter_node
+  setup_synchronizer_node
   DESTINATION lib/${PROJECT_NAME}/
 )
 install(DIRECTORY include/ DESTINATION include)
