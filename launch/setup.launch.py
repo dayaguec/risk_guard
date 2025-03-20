@@ -1,4 +1,4 @@
-from launch_ros.actions import (PushRosNamespace, Node)
+from launch_ros.actions import (SetRemap, PushRosNamespace, Node)
 from launch import LaunchDescription
 from launch.actions import (IncludeLaunchDescription, DeclareLaunchArgument, GroupAction, TimerAction, Shutdown)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -12,14 +12,14 @@ import os
 
 def generate_launch_description():
 
-  fisheye_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
+  fisheye_config_dir = os.path.join(get_package_share_directory('risk_guard'), 'config')
   fisheye_config_file = 'file://' + os.path.join(fisheye_config_dir, "fisheye_info.yaml")
   fisheye_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
-            FindPackageShare('ros2_ipcamera'), 'launch', 'ipcamera.launch.py'
+            FindPackageShare('risk_guard'), 'launch', 'ipcamera.launch.py'
             ])
           ]),
           launch_arguments = {
@@ -36,14 +36,14 @@ def generate_launch_description():
     ]
   )
 
-  reolink_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
+  reolink_config_dir = os.path.join(get_package_share_directory('risk_guard'), 'config')
   reolink_config_file = 'file://' + os.path.join(reolink_config_dir, "reolink_info.yaml")
   reolink_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
-            FindPackageShare('ros2_ipcamera'), 'launch', 'ipcamera.launch.py'
+            FindPackageShare('risk_guard'), 'launch', 'ipcamera.launch.py'
             ])
           ]),
           launch_arguments = {
@@ -60,14 +60,14 @@ def generate_launch_description():
     ]
   )
 
-  hick_config_dir = os.path.join(get_package_share_directory('ros2_ipcamera'), 'config')
+  hick_config_dir = os.path.join(get_package_share_directory('risk_guard'), 'config')
   hick_config_file = 'file://' + os.path.join(hick_config_dir, "reolink_info.yaml")
   hick_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
-            FindPackageShare('ros2_ipcamera'), 'launch', 'ipcamera.launch.py'
+            FindPackageShare('risk_guard'), 'launch', 'ipcamera.launch.py'
             ])
           ]),
           launch_arguments = {
@@ -85,7 +85,7 @@ def generate_launch_description():
   )
 
   ouster_params = PathJoinSubstitution([
-    FindPackageShare('ros2_ipcamera'), 'config', 'ouster.yaml'
+    FindPackageShare('risk_guard'), 'config', 'ouster.yaml'
   ])
   ouster_launch = GroupAction(
     actions = [
@@ -104,10 +104,12 @@ def generate_launch_description():
   )
 
   basler_right_params = PathJoinSubstitution([
-    FindPackageShare('ros2_ipcamera'), 'config', 'basler_right.yaml'
+    FindPackageShare('risk_guard'), 'config', 'basler_right.yaml'
   ])
   basler_right_launch = GroupAction(
     actions = [
+      SetRemap(src='/F_r_cam/basler_right_driver/image_rect',
+        dst='/right_image'),
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
@@ -125,10 +127,12 @@ def generate_launch_description():
   )
 
   basler_left_params = PathJoinSubstitution([
-    FindPackageShare('ros2_ipcamera'), 'config', 'basler_left.yaml'
+    FindPackageShare('risk_guard'), 'config', 'basler_left.yaml'
   ])
   basler_left_launch = GroupAction(
     actions = [
+      SetRemap(src='/F_l_cam/basler_left_driver/image_rect',
+        dst='/left_image'),
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
@@ -145,18 +149,37 @@ def generate_launch_description():
     ]
   )
 
+  camera_params = PathJoinSubstitution([
+    FindPackageShare('risk_guard'), 'config', 'setup.yaml'
+  ])
+  image_transport_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('risk_guard'), 'launch', 'image_transport.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'sensor_params_path' : camera_params
+          }.items()
+      )
+    ]
+  )
+
   setup_sync_launch = GroupAction(
     actions = [
       IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
           PathJoinSubstitution([
-            FindPackageShare('ros2_ipcamera'), 'launch', 'setup_synchronizer.launch.py'
+            FindPackageShare('risk_guard'), 'launch', 'setup_synchronizer.launch.py'
             ])
           ]),
           launch_arguments = {
             # Global params
-            'camera_left_topic' : '/F_l_cam/basler_left_driver/image_rect/compressed',
-            'camera_right_topic' : '/F_r_cam/basler_right_driver/image_rect/compressed',
+            'camera_left_topic' : '/left_image/image_it/compressed',
+            'camera_right_topic' : '/right_image/image_it/compressed',
             'lidar_topic' : '/points',
             'aggregated_perception_topic' : '/all_in_one'
           }.items()
@@ -165,7 +188,7 @@ def generate_launch_description():
   )
 
   rviz_config_path = PathJoinSubstitution([
-    FindPackageShare('ros2_ipcamera'), 'rviz', 'setup.rviz'
+    FindPackageShare('risk_guard'), 'rviz', 'setup.rviz'
   ])
   rviz_node = TimerAction(
     period = 3.0,
@@ -179,15 +202,16 @@ def generate_launch_description():
     ]
   )
 
-  # @todo: 1280 x 720 lower reoslution of basler cameras
+  # ori: image_width: 2048 and image_height: 1539
 
   return LaunchDescription([
     # fisheye_launch,
     # reolink_launch,
-    ouster_launch,
+    # ouster_launch,
     # hick_launch,
-    basler_left_launch,
-    basler_right_launch,
+    # basler_left_launch,
+    # basler_right_launch,
+    image_transport_launch,
     setup_sync_launch,
     rviz_node
   ])

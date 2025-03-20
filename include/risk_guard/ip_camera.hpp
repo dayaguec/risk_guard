@@ -1,5 +1,5 @@
-#ifndef IPCAMERA_NODE_HPP
-#define IPCAMERA_NODE_HPP
+#ifndef IP_CAMERA_NODE_HPP
+#define IP_CAMERA_NODE_HPP
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include <camera_info_manager/camera_info_manager.hpp>
 
-namespace ros2_ipcamera
+namespace risk_guard
 {
   class IpCameraNode : public rclcpp::Node
   {
@@ -32,5 +32,5 @@ namespace ros2_ipcamera
 
       cv::VideoCapture cap_;
   };
-}  // namespace ros2_ipcamera
-#endif // IPCAMERA_NODE_HPP
+}  // namespace risk_guard
+#endif // IP_CAMERA_NODE_HPP

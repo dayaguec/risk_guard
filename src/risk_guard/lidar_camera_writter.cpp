@@ -1,6 +1,6 @@
-#include <ros2_ipcamera/lidar_camera_writter.hpp>
+#include <risk_guard/lidar_camera_writter.hpp>
 
-namespace ros2_ipcamera
+namespace risk_guard
 {
   LidarCameraWriterNode::LidarCameraWriterNode(const std::string &node_name,
     const rclcpp::NodeOptions &options)

@@ -1,0 +1,3 @@
+cameras:
+  - "left_image"
+  - "right_image"

@@ -32,9 +32,9 @@ def generate_launch_description():
     description='Image frame_id')
 
   ipcamera_node = Node(
-    package='ros2_ipcamera',
-    executable='ros2_ipcamera_node',
-    name='ros2_ipcamera_node',
+    package='risk_guard',
+    executable='ip_camera_node',
+    name='ip_camera_node',
     output='screen',
     parameters=[
       {'rtsp_uri': rtsp_uri},

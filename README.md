@@ -1,2 +1,2 @@
-# ros2_ipcamera
-ROS 2 Node to generate sensor images from IP Camera stream outputs
+# risk_guard
+ROS 2 Sensing System to Ensure Minimum Risk Conditions for Autonomous Vehicle Failures: Perception for Situational Awareness and Simulation of Environment.

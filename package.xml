@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros2_ipcamera</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="lsi@todo.todo">lsi</maintainer>
-  <license>TODO: License declaration</license>
+  <name>risk_guard</name>
+  <version>0.1.0</version>
+  <description>ROS 2 Sensing System to Ensure Minimum Risk Conditions for Autonomous Vehicle Failures: Perception for Situational Awareness and Simulation of Environment.</description>
+  <url type="repository">https://github.com/dayaguec/risk_guard</url>
+  <url type="bugtracker">https://github.com/dayaguec/risk_guard/issues</url>
+  <maintainer email="dayaguec@inf.uc3m.es">David Yagüe Cuevas </maintainer>
+  <author email="dayaguec@inf.uc3m.es">David Yagüe Cuevas </author>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>

@@ -1,11 +1,7 @@
-import os
-import pathlib
-import yaml
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, Shutdown
+from launch.actions import (DeclareLaunchArgument, Shutdown)
 from launch.substitutions import (LaunchConfiguration, TextSubstitution)
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
@@ -23,7 +19,7 @@ def generate_launch_description():
     description='Topic for synch message of the three topics')
 
   setup_synchronizer_node = Node(
-    package='ros2_ipcamera',
+    package='risk_guard',
     executable='setup_synchronizer_node',
     name='setup_synchronizer_node',
     output='screen',

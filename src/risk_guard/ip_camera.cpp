@@ -1,6 +1,6 @@
-#include <ros2_ipcamera/ros2_ipcamera.hpp>
+#include <risk_guard/ip_camera.hpp>
 
-namespace ros2_ipcamera
+namespace risk_guard
 {
   IpCameraNode::IpCameraNode(const std::string &node_name,
     const rclcpp::NodeOptions &options)
