@@ -12,7 +12,7 @@ F_l_cam:
       #  The CameraInfo URL (Uniform Resource Locator) where the optional intrinsic
       #  camera calibration parameters are stored. This URL string will be parsed
       #  from the ROS-CameraInfoManager:
-      camera_info_url: "file:///home/uc3m/ros2_ws/src/risk_guard/config/calibration/basler_left_info.yaml"
+      camera_info_url: "file:///home/weasfas/ros2_ws/src/risk_guard/config/calibration/basler_left_info.yaml"
 
       #  The encoding of the pixels -- channel meaning, ordering, size
       #  taken from the list of strings in include/sensor_msgs/image_encodings.h
@@ -33,7 +33,7 @@ F_l_cam:
       #  The desired publisher frame rate if listening to the topics.
       #  This parameter can only be set once at startup
       #  Calling the GrabImages-Action can result in a higher framerate
-      frame_rate: 20.0
+      frame_rate: 33.0
 
       #  Mode of camera's shutter.
       #  The supported modes are "rolling", "global" and "global_reset"

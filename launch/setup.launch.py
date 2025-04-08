@@ -120,6 +120,9 @@ def generate_launch_description():
             # Global params
             'config_file' : basler_right_params,
             'node_name' : 'basler_right_driver',
+            'enable_status_publisher' : 'False',
+            'enable_current_params_publisher' : 'False',
+            'mtu_size' : '1500',
             'camera_id' : 'F_r_cam'
           }.items()
       )
@@ -143,7 +146,50 @@ def generate_launch_description():
             # Global params
             'config_file' : basler_left_params,
             'node_name' : 'basler_left_driver',
+            'enable_status_publisher' : 'False',
+            'enable_current_params_publisher' : 'False',
+            'mtu_size' : '1500',
             'camera_id' : 'F_l_cam'
+          }.items()
+      )
+    ]
+  )
+
+  basler_own_right_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('risk_guard'), 'launch', 'basler_node.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'node_name' : 'basler_right_driver',
+            'serial_number' : '23107262',
+            'device_user_id' : 'F_r_cam',
+            'node_rate' : '35.0',
+            'camera_info_url' : 'file:///home/weasfas/ros2_ws/src/risk_guard/config/calibration/basler_right_info.yaml'
+          }.items()
+      )
+    ]
+  )
+
+  basler_own_left_launch = GroupAction(
+    actions = [
+      IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+          PathJoinSubstitution([
+            FindPackageShare('risk_guard'), 'launch', 'basler_node.launch.py'
+            ])
+          ]),
+          launch_arguments = {
+            # Global params
+            'node_name' : 'basler_left_driver',
+            'serial_number' : '23107274',
+            'device_user_id' : 'F_l_cam',
+            'node_rate' : '35.0',
+            'camera_info_url' : 'file:///home/weasfas/ros2_ws/src/risk_guard/config/calibration/basler_left_info.yaml'
           }.items()
       )
     ]
@@ -211,7 +257,9 @@ def generate_launch_description():
     # hick_launch,
     # basler_left_launch,
     # basler_right_launch,
-    image_transport_launch,
-    setup_sync_launch,
-    rviz_node
+    basler_own_right_launch,
+    basler_own_left_launch,
+    # image_transport_launch,
+    # setup_sync_launch,
+    # rviz_node
   ])

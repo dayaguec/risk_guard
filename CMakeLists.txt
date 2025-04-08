@@ -25,6 +25,12 @@ find_package(message_filters REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(image_geometry REQUIRED)
+
+find_package(Pylon QUIET)
+if (NOT ${Pylon_FOUND} OR "$ENV{Pylon_INCLUDE_DIRS}" STREQUAL "")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindPylon.cmake")
+endif()
 
 set(msg_files
   "msg/AggregatedPerception.msg"
@@ -41,6 +47,7 @@ ament_export_dependencies(rosidl_default_runtime)
 
 include_directories(
   include
+  ${Pylon_INCLUDE_DIRS}
 )
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
@@ -52,6 +59,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   OpenCV
   yaml-cpp
   camera_info_manager
+  image_geometry
 )
 
 set(SYNC_INCLUDE_DEPENDS
@@ -79,6 +87,10 @@ target_link_libraries(ip_camera_node ${RISK_GUARD_LIB_NAME})
 add_executable(image_transport_node src/image_transport_node.cpp)
 ament_target_dependencies(image_transport_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
 target_link_libraries(image_transport_node ${RISK_GUARD_LIB_NAME})
+
+add_executable(basler_ros_node src/basler_ros_node.cpp)
+ament_target_dependencies(basler_ros_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(basler_ros_node ${Pylon_LIBRARIES})
 
 add_library(${SYNC_LIB_NAME} SHARED
   src/risk_guard/lidar_camera_writter.cpp
@@ -115,6 +127,7 @@ install(TARGETS
   lidar_camera_writter_node
   setup_synchronizer_node
   image_transport_node
+  basler_ros_node
   DESTINATION lib/${PROJECT_NAME}/
 )
 install(DIRECTORY include/ DESTINATION include)
