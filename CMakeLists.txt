@@ -8,9 +8,9 @@ endif()
 find_package(PCL REQUIRED QUIET COMPONENTS common features filters io segmentation surface)
 
 # add_definitions(-DIMAGE_AND_PCL)
-add_definitions(-DIMAGE_COMPRESS_AND_PCL)
+# add_definitions(-DIMAGE_COMPRESS_AND_PCL)
 # add_definitions(-DONLY_IMAGE)
-# add_definitions(-DONLY_IMAGE_COMPRESS)
+add_definitions(-DONLY_IMAGE_COMPRESS)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)

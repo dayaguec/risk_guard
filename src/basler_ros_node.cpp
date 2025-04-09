@@ -4,12 +4,13 @@
 #include <image_transport/image_transport.hpp>
 
 #include <camera_info_manager/camera_info_manager.hpp>
-#include <image_geometry/pinhole_camera_model.h>
+// This is a .h header in Humble
+#include <image_geometry/pinhole_camera_model.hpp>
 
 // Include files to use OpenCV API.
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 
 // Include files to use the PYLON API.
 #include <pylon/PylonIncludes.h>
@@ -51,8 +52,8 @@ int main(int argc, char * argv[])
   init_cam_info.header.frame_id = device_user_id;
   init_cam_info.header.stamp = basler_node->now();
 
-  init_cam_info.height = 1920;
-  init_cam_info.width = 1080;
+  init_cam_info.height = 1280;
+  init_cam_info.width = 720;
   init_cam_info.distortion_model = "";
   init_cam_info.d = std::vector<double>(5, 0.);
   init_cam_info.k.fill(0.0);
@@ -106,9 +107,20 @@ int main(int argc, char * argv[])
     RCLCPP_INFO_STREAM(basler_node->get_logger(), "Camera Created..." <<
       std::endl << "Using device: " << camera.GetDeviceInfo().GetModelName());
 
+    camera.Open();
+
     /* The parameter MaxNumBuffer can be used to control the count of buffers
        allocated for grabbing. The default value of this parameter is 10. */
     camera.MaxNumBuffer = 20;
+    GenApi::INodeMap &nodemap = camera.GetNodeMap();
+    Pylon::CIntegerParameter width(nodemap, "Width");
+    width.SetValue(1920);
+    Pylon::CIntegerParameter height(nodemap, "Height");
+    height.SetValue(1080);
+    Pylon::CBooleanParameter center_x(nodemap, "CenterX");
+    center_x.SetValue(true);
+    Pylon::CBooleanParameter center_y(nodemap, "CenterY");
+    center_y.SetValue(true);
 
     // Create pylon image format converter and pylon image
     Pylon::CImageFormatConverter format_converter;
@@ -156,7 +168,7 @@ int main(int argc, char * argv[])
         // Create an OpenCV image out of pylon image
         open_cv_image = cv::Mat(ptr_grab_result->GetHeight(), ptr_grab_result->GetWidth(), CV_8UC3, (uint8_t *) pylon_image.GetBuffer());
 
-        cv::resize(open_cv_image, resized_open_cv_image, cv::Size(1280, 920));
+        cv::resize(open_cv_image, resized_open_cv_image, cv::Size(1280, 720));
 
         // Create a display window
         // cv::namedWindow("OpenCV Display Window", cv::WINDOW_AUTOSIZE);
@@ -187,7 +199,7 @@ int main(int argc, char * argv[])
       }
 
       rclcpp::spin_some(basler_node);
-      // loop_rate.sleep();
+      loop_rate.sleep();
     }
   }
   catch(GenICam::GenericException &e)

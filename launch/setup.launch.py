@@ -169,7 +169,7 @@ def generate_launch_description():
             'serial_number' : '23107262',
             'device_user_id' : 'F_r_cam',
             'node_rate' : '35.0',
-            'camera_info_url' : 'file:///home/weasfas/ros2_ws/src/risk_guard/config/calibration/basler_right_info.yaml'
+            'camera_info_url' : 'file:///home/david/ros2_ws/src/risk_guard/config/calibration/basler_right_info.yaml'
           }.items()
       )
     ]
@@ -189,7 +189,7 @@ def generate_launch_description():
             'serial_number' : '23107274',
             'device_user_id' : 'F_l_cam',
             'node_rate' : '35.0',
-            'camera_info_url' : 'file:///home/weasfas/ros2_ws/src/risk_guard/config/calibration/basler_left_info.yaml'
+            'camera_info_url' : 'file:///home/david/ros2_ws/src/risk_guard/config/calibration/basler_left_info.yaml'
           }.items()
       )
     ]
@@ -257,9 +257,9 @@ def generate_launch_description():
     # hick_launch,
     # basler_left_launch,
     # basler_right_launch,
-    basler_own_right_launch,
+    # basler_own_right_launch,
     basler_own_left_launch,
     # image_transport_launch,
-    # setup_sync_launch,
-    # rviz_node
+    setup_sync_launch,
+    rviz_node
   ])
